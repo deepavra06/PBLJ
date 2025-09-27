@@ -1,0 +1,91 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class StreamStudentProcessor {
+
+    static class Student {
+        private String name;
+        private double marks;
+
+        public Student(String name, double marks) {
+            this.name = name;
+            this.marks = marks;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public double getMarks() {
+            return marks;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%-15s: %.2f%%", name, marks);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<Student> students = new ArrayList<>();
+
+        System.out.println("--- Student Data Entry ---");
+        System.out.print("Enter the number of students to add: ");
+        int numStudents = 0;
+        if (scanner.hasNextInt()) {
+            numStudents = scanner.nextInt();
+            scanner.nextLine();
+        } else {
+            System.out.println("Invalid number entered. Exiting.");
+            scanner.close();
+            return;
+        }
+
+        for (int i = 0; i < numStudents; i++) {
+            System.out.println("\nStudent #" + (i + 1));
+            System.out.print("Enter Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter Marks (e.g., 85.5): ");
+            double marks = 0.0;
+            if (scanner.hasNextDouble()) {
+                marks = scanner.nextDouble();
+            }
+            scanner.nextLine();
+            
+            students.add(new Student(name, marks));
+        }
+
+        if (students.isEmpty()) {
+            System.out.println("\nNo students added. Exiting.");
+            scanner.close();
+            return;
+        }
+
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("--- Initial Student Data ---");
+        students.forEach(System.out::println);
+        System.out.println("=".repeat(50));
+
+        System.out.println("--- Students Qualified (Marks > 75%, Sorted by Marks) ---");
+
+        List<String> topStudents = students.stream()
+            .filter(s -> s.getMarks() > 75.0)
+            .sorted((s1, s2) -> Double.compare(s1.getMarks(), s2.getMarks()))
+            .map(Student::getName)
+            .collect(Collectors.toList());
+
+        if (topStudents.isEmpty()) {
+            System.out.println("No students scored above 75%.");
+        } else {
+            topStudents.forEach(System.out::println);
+        }
+
+        System.out.println("\n" + "=".repeat(50));
+        scanner.close();
+        System.out.println("Created by: Avradeep Ghosh");
+    }
+}
