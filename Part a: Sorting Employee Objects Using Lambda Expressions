@@ -1,0 +1,149 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
+
+public class LambdaEmployeeSorter {
+
+    static class Employee {
+        private String name;
+        private int age;
+        private double salary;
+
+        public Employee(String name, int age, double salary) {
+            this.name = name;
+            this.age = age;
+            this.salary = salary;
+        }
+
+        public String getName() { return name; }
+        public int getAge() { return age; }
+        public double getSalary() { return salary; }
+
+        @Override
+        public String toString() {
+            return String.format("%-15s | Age: %-3d | Salary: $%.2f", name, age, salary);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<Employee> employees = new ArrayList<>();
+        int choice;
+
+        // ----------------------------------------------------
+        // 1. Data Input by User
+        // ----------------------------------------------------
+        System.out.println("--- Employee Data Entry ---");
+        System.out.print("Enter the number of employees to add: ");
+        int numEmployees = 0;
+        if (scanner.hasNextInt()) {
+            numEmployees = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+        } else {
+            System.out.println("⚠️ Invalid number entered. Exiting.");
+            scanner.close();
+            return;
+        }
+
+        for (int i = 0; i < numEmployees; i++) {
+            System.out.println("\nEmployee #" + (i + 1));
+            System.out.print("Enter Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter Age: ");
+            int age = 0;
+            if (scanner.hasNextInt()) {
+                age = scanner.nextInt();
+            }
+            scanner.nextLine(); // Consume newline
+
+            System.out.print("Enter Salary: ");
+            double salary = 0.0;
+            if (scanner.hasNextDouble()) {
+                salary = scanner.nextDouble();
+            }
+            scanner.nextLine(); // Consume newline
+            
+            employees.add(new Employee(name, age, salary));
+        }
+
+        if (employees.isEmpty()) {
+            System.out.println("\nNo employees added. Exiting.");
+            scanner.close();
+            return;
+        }
+        
+        System.out.println("\n" + "=".repeat(50));
+
+        // ----------------------------------------------------
+        // 2. Sorting Menu (Switch-Case)
+        // ----------------------------------------------------
+        do {
+            displayMenu();
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+                scanner.nextLine();
+
+                System.out.println("\n--- Current List ---");
+                System.out.println(String.format("%-15s | %-7s | %-12s", "Name", "Age", "Salary"));
+                System.out.println("-".repeat(50));
+                employees.forEach(System.out::println);
+                System.out.println("-".repeat(50));
+
+                switch (choice) {
+                    case 1:
+                        System.out.println("--- Sorting by Name (A-Z) ---");
+                        // Lambda for Name
+                        employees.sort((e1, e2) -> e1.getName().compareTo(e2.getName()));
+                        break;
+                    case 2:
+                        System.out.println("--- Sorting by Age (Ascending) ---");
+                        // Lambda for Age
+                        employees.sort((e1, e2) -> Integer.compare(e1.getAge(), e2.getAge()));
+                        break;
+                    case 3:
+                        System.out.println("--- Sorting by Salary (Descending) ---");
+                        // Lambda via Comparator Utility
+                        employees.sort(Comparator.comparing(Employee::getSalary).reversed());
+                        break;
+                    case 4:
+                        System.out.println("Exiting application. Goodbye! 👋");
+                        break;
+                    default:
+                        System.out.println("⚠️ Invalid choice. Please enter a number between 1 and 4.");
+                        continue;
+                }
+
+                if (choice != 4) {
+                    System.out.println("--- Sorted List ---");
+                    employees.forEach(System.out::println);
+                }
+            } else {
+                System.out.println("⚠️ Invalid input. Please enter a number.");
+                scanner.next();
+                choice = 0;
+            }
+
+            System.out.println("\n" + "=".repeat(50) + "\n");
+        } while (choice != 4);
+
+        scanner.close();
+        
+        // ----------------------------------------------------
+        // 3. Signature
+        // ----------------------------------------------------
+        System.out.println("\n\n**************************************************");
+        System.out.println("Created By: Avradeep Ghosh(23BCS10155)");
+        System.out.println("**************************************************");
+    }
+
+    private static void displayMenu() {
+        System.out.println("✨ Select Sorting Criteria ✨");
+        System.out.println("1. Sort by Name (A-Z)");
+        System.out.println("2. Sort by Age (Ascending)");
+        System.out.println("3. Sort by Salary (Descending)");
+        System.out.println("4. Exit");
+        System.out.print("Enter choice: ");
+    }
+}
