@@ -1,0 +1,56 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        List<Integer> numberList = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        System.out.println("--- Autoboxing and Unboxing Demonstration ---");
+        System.out.println("Please enter integers one by one. Type 'done' or 'exit' to calculate the sum.");
+        System.out.println("---------------------------------------------");
+
+        while (true) {
+            System.out.print("Enter integer (or 'done'): ");
+            input = scanner.nextLine().trim();
+
+            if (input.equalsIgnoreCase("done") || input.equalsIgnoreCase("exit")) {
+                break;
+            }
+
+            try {
+                int primitiveInt = Integer.parseInt(input);
+
+                numberList.add(primitiveInt); 
+                
+                System.out.println("-> Added: " + primitiveInt + " (Autoboxing from int to Integer object occurred)");
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input: '" + input + "' is not a valid integer. Please try again.");
+            }
+        }
+
+        scanner.close();
+
+        if (numberList.isEmpty()) {
+            System.out.println("\nNo valid integers were entered. Final sum: 0");
+        } else {
+            long sum = 0;
+            
+            System.out.println("\n--- Calculating Sum ---");
+            
+            for (int number : numberList) {
+                sum += number;
+            }
+            
+            System.out.println("Calculation complete. Total items: " + numberList.size());
+            System.out.println("-------------------------");
+            System.out.println("Total Sum: " + sum);
+        }
+        
+        System.out.println("\nCreated by Avradeep Ghosh (23BCS10155)");
+    }
+}
