@@ -1,0 +1,85 @@
+import java.io.*;
+import java.util.Scanner;
+
+public class SerializationDemo {
+
+    private static final String FILE_NAME = "student.ser";
+
+    public static class Student implements Serializable {
+        private static final long serialVersionUID = 1L; 
+        
+        public int studentID;
+        public String name;
+        public double grade;
+
+        public Student(int studentID, String name, double grade) {
+            this.studentID = studentID;
+            this.name = name;
+            this.grade = grade;
+        }
+
+        @Override
+        public String toString() {
+            return "Student [ID=" + studentID + ", Name=" + name + ", Grade=" + grade + "]";
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("--- Part B: Student Object Serialization ---");
+        
+        try {
+            System.out.print("Enter Student ID (int): ");
+            int id = Integer.parseInt(scanner.nextLine());
+    
+            System.out.print("Enter Student Name (String): ");
+            String name = scanner.nextLine();
+    
+            System.out.print("Enter Student Grade (double): ");
+            double grade = Double.parseDouble(scanner.nextLine());
+    
+            Student originalStudent = new Student(id, name, grade);
+            System.out.println("\nOriginal Object Created: " + originalStudent);
+            System.out.println("------------------------------------------");
+    
+            try (FileOutputStream fileOut = new FileOutputStream(FILE_NAME);
+                 ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+    
+                out.writeObject(originalStudent);
+                System.out.println("SUCCESS: Object has been serialized and saved to " + FILE_NAME);
+    
+            } catch (IOException i) {
+                System.err.println("Serialization failed (IO Error): " + i.getMessage());
+                return; 
+            }
+    
+            Student deserializedStudent = null;
+            
+            try (FileInputStream fileIn = new FileInputStream(FILE_NAME);
+                 ObjectInputStream in = new ObjectInputStream(fileIn)) {
+    
+                deserializedStudent = (Student) in.readObject();
+    
+            } catch (IOException i) {
+                System.err.println("Deserialization failed (IO Error): " + i.getMessage());
+                return;
+            } catch (ClassNotFoundException c) {
+                System.err.println("Deserialization failed (Class not found): Student class not found.");
+                return;
+            }
+    
+            System.out.println("\nSUCCESS: Object has been deserialized.");
+            System.out.println("Deserialized Object Retrieved: " + deserializedStudent);
+            
+            System.out.println("Verification - Deserialized object retrieved successfully.");
+            
+        } catch (NumberFormatException e) {
+            System.err.println("\nError: Invalid format for ID or Grade. Please ensure you enter numbers correctly.");
+        } finally {
+            scanner.close();
+        }
+        
+        System.out.println("\nCreated by Avradeep Ghosh (23BCS10155)");
+    }
+}
