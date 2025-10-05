@@ -1,0 +1,80 @@
+-- Step 1: Create a new database named 'company'
+CREATE DATABASE IF NOT EXISTS company;
+
+-- Step 2: Select the 'company' database to work with
+USE company;
+
+-- Step 3: Create the 'Employee' table
+CREATE TABLE IF NOT EXISTS Employee (
+    EmpID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Salary DECIMAL(10, 2)
+);
+
+-- Step 4: Clear the table before adding new data
+TRUNCATE TABLE Employee;
+
+-- Step 5: Insert three sample records into the 'Employee' table
+INSERT INTO Employee (EmpID, Name, Salary) VALUES
+(101, 'Arjun Kumar', 75000.00),
+(102, 'Priya Sharma', 82000.50),
+(103, 'Rohan Gupta', 68000.75);
+
+-- Step 6: Verify that the data was inserted correctly
+SELECT * FROM Employee;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+/**
+ * This program connects to a MySQL database, fetches data from an 'Employee' table,
+ * and displays it on the console.
+ */
+public class MySqlDataFetcher {
+
+    // --- Database Configuration ---
+    // This connects to the 'company' database which you must create with the setup.sql script.
+    static final String DB_URL = "jdbc:mysql://localhost:3306/company";
+    static final String USER = "root"; // This is a common default username.
+    static final String PASS = "";     // This is a common default for an empty password.
+
+    public static void main(String[] args) {
+        System.out.println("Attempting to connect to the database...");
+        try (
+            // Establish the connection to the database
+            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            // Create a statement object to execute SQL queries
+            Statement stmt = conn.createStatement();
+        ) {
+            System.out.println("Successfully connected to the database!");
+
+            // The SQL query to fetch all records from the Employee table
+            String sqlQuery = "SELECT EmpID, Name, Salary FROM Employee";
+            System.out.println("Executing query: " + sqlQuery);
+            ResultSet rs = stmt.executeQuery(sqlQuery);
+
+            System.out.println("\n--- Employee Records ---");
+            // Loop through the results and print each record
+            while (rs.next()) {
+                // Retrieve data by column name
+                int id = rs.getInt("EmpID");
+                String name = rs.getString("Name");
+                double salary = rs.getDouble("Salary");
+                // Print the record to the console
+                System.out.println("ID: " + id + ", Name: " + name + ", Salary: " + String.format("%.2f", salary));
+            }
+            System.out.println("------------------------\nData fetching complete.");
+
+        } catch (SQLException e) {
+            // This block will run if there is a database connection error
+            System.err.println("\nERROR: Database connection failed!");
+            System.err.println("Please ensure the MySQL server is running and you have run the setup.sql script.");
+            e.printStackTrace();
+        }
+    }
+}
+
