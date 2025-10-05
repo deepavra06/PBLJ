@@ -1,0 +1,136 @@
+-- ====================================================================
+--                      DATABASE CREATION
+-- ====================================================================
+CREATE DATABASE IF NOT EXISTS company;
+USE company;
+
+-- ====================================================================
+--                      EMPLOYEE TABLE
+-- ====================================================================
+-- Step 1: Create the 'Employee' table
+CREATE TABLE IF NOT EXISTS Employee (
+    EmpID INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Salary DECIMAL(10, 2)
+);
+
+-- Step 2: Clear any existing data
+TRUNCATE TABLE Employee;
+
+-- Step 3: Insert sample records
+INSERT INTO Employee (EmpID, Name, Salary) VALUES
+(101, 'Arjun Kumar', 75000.00),
+(102, 'Priya Sharma', 82000.50),
+(103, 'Rohan Gupta', 68000.75);
+
+
+-- ====================================================================
+--                      PRODUCT TABLE
+-- ====================================================================
+-- Step 1: Create the 'Product' table
+CREATE TABLE IF NOT EXISTS Product (
+    ProductID INT AUTO_INCREMENT PRIMARY KEY,
+    ProductName VARCHAR(100) NOT NULL,
+    Price DECIMAL(10, 2),
+    Quantity INT
+);
+
+-- Step 2: Clear any existing data
+TRUNCATE TABLE Product;
+
+-- Step 3: Insert some sample records
+INSERT INTO Product (ProductName, Price, Quantity) VALUES
+('Laptop', 1200.00, 50),
+('Smartphone', 800.50, 200),
+('Keyboard', 75.75, 500);
+
+
+-- ====================================================================
+--                      STUDENT TABLE
+-- ====================================================================
+-- Step 1: Create the 'Student' table
+CREATE TABLE IF NOT EXISTS Student (
+    StudentID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Department VARCHAR(100),
+    Marks DECIMAL(5, 2)
+);
+
+-- Step 2: Clear any existing data
+TRUNCATE TABLE Student;
+
+-- Step 3: Insert some sample student records
+INSERT INTO Student (Name, Department, Marks) VALUES
+('Amit Roy', 'Computer Science', 85.50),
+('Bina Das', 'Electronics', 92.75),
+('Chirag Sen', 'Mechanical', 78.00);
+
+
+-- ====================================================================
+--                      VERIFICATION
+-- ====================================================================
+-- Display the contents of all tables to verify the setup
+SELECT '--- Employee Table ---' AS 'Table Name';
+SELECT * FROM Employee;
+
+SELECT '--- Product Table ---' AS 'Table Name';
+SELECT * FROM Product;
+
+SELECT '--- Student Table ---' AS 'Table Name';
+SELECT * FROM Student;
+
+-- --- End of Script ---
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+/**
+ * Connects to a MySQL database and fetches all records from the Employee table.
+ */
+public class MySqlDataFetcher {
+
+    // --- Database Configuration ---
+    // Ensure these match your MySQL setup.
+    // The database name is 'company' as defined in your SQL script.
+    static final String DB_URL = "jdbc:mysql://localhost:3306/company";
+    static final String USER = "root"; // Common default, but please verify.
+    static final String PASS = "";     // Common default, but please verify.
+
+    public static void main(String[] args) {
+        System.out.println("Attempting to connect to the database...");
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+             Statement stmt = conn.createStatement()) {
+
+            System.out.println("Successfully connected to the database...");
+
+            String sqlQuery = "SELECT EmpID, Name, Salary FROM Employee";
+            System.out.println("Executing query: " + sqlQuery + "\n");
+
+            try (ResultSet rs = stmt.executeQuery(sqlQuery)) {
+                System.out.println("--- Employee Records ---");
+                while (rs.next()) {
+                    // Retrieve by column name
+                    int id = rs.getInt("EmpID");
+                    String name = rs.getString("Name");
+                    double salary = rs.getDouble("Salary");
+
+                    // Display values
+                    System.out.printf("ID: %d, Name: %s, Salary: %.2f\n", id, name, salary);
+                }
+                System.out.println("------------------------");
+            }
+            System.out.println("Data fetching complete.");
+
+        } catch (SQLException e) {
+            System.err.println("Database Error: Could not connect or execute query.");
+            System.err.println("Please check your DB_URL, USER, and PASS variables.");
+            e.printStackTrace();
+        }
+    }
+}
+
